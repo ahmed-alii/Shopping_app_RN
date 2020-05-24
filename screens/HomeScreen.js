@@ -1,39 +1,47 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Alert, RefreshControl, ScrollView, StyleSheet, Text, View} from 'react-native'
-import {ListItem} from "react-native-elements";
-import UserContext from "../connection/userContext";
-import {Fetch, Firebase} from "../connection/comms";
-import TrainsList from "../components/TrainsDetailsList";
+import {RefreshControl, ScrollView, StyleSheet, Text, View} from 'react-native'
+import {Button, Card} from "react-native-elements";
+import UserContext from "../WebServices/userContext";
+import {pets} from "../constants/pets";
+import {Fetch} from "../WebServices/firebaseIO";
 
 export default function HomeScreen({navigation}) {
   const [Loading, setLoading] = useState(true)
-  const [trains, setTrains] = useState(undefined)
+  const [status, setStatus] = useState(undefined)
   const [refreshing, setRefreshing] = useState(false);
   const {loggedIn, setLoggedin} = useContext(UserContext)
 
 
-  const loadDataInView = () => {
+  //Fetch shop data and get it into the app from the API
+  useEffect(() => {
+    if (Loading === true) {
+      Fetch.getData(loggedIn.city).then(res => {
+        if(res.error){
+          alert(res.error)
+          setLoading(false)
+          setRefreshing(false)
+        }else{
+          setStatus(res)
+          setLoading(false)
+          setRefreshing(false)
+        }
+      })
+    }
+  })
+
+  //Fetch data again when pull to refresh.
+  const onRefresh = () => {
     Fetch.getData(loggedIn.city).then(res => {
       if(res.error){
         alert(res.error)
         setLoading(false)
         setRefreshing(false)
       }else{
-        setTrains(res.departures.all)
+        setStatus(res)
         setLoading(false)
         setRefreshing(false)
       }
     })
-  }
-
-  useEffect(() => {
-    if (Loading === true) {
-      loadDataInView()
-    }
-  })
-
-  const onRefresh = () => {
-    loadDataInView()
     setRefreshing(true)
     setLoading(true)
 
@@ -44,18 +52,32 @@ export default function HomeScreen({navigation}) {
       <UserContext.Consumer>
         {({loggedIn, setLoggedin}) => (
             <View style={styles.container}>
-              <View style={styles.header}>
-                <Text style={styles.smallText}>
-                  Showing All Trains For Your Location
-                </Text>
+              <ScrollView style={styles.container}
+                          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
 
-                <Text style={styles.title}>
-                  🗺 {loggedIn.city}
-                </Text>
-              </View>
-              <ScrollView style={styles.container} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
-                <TrainsList trains={trains}/>
-                <Text style={{textAlign: "center", paddingVertical: 20}}>{"No more trains leaving today 🚏"}</Text>
+                <Text style={{color: "gray", fontSize: 18, paddingHorizontal: 20, paddingVertical: 10}}>Shop is: <Text style={{color: "black", fontSize: 25, fontWeight: "bold", paddingHorizontal: 10}}>{status}</Text></Text>
+
+                <Card title={"Cats"} image={require("../assets/images/cats.jpg")}>
+                  <Button title={"Show Products"} onPress={() => {
+                    navigation.navigate("Details", {pet: pets.cats})
+                  }}/>
+                </Card>
+                <Card title={"Dogs"} image={require("../assets/images/dogs.jpg")}>
+                  <Button title={"Show Products"} onPress={() => {
+                    navigation.navigate("Details", {pet: pets.dogs})
+                  }}/>
+                </Card>
+                <Card title={"Hens"} image={require("../assets/images/hens.jpg")}>
+                  <Button title={"Show Products"} onPress={() => {
+                    navigation.navigate("Details", {pet: pets.hens})
+                  }}/>
+                </Card>
+                <Card title={"Fish"} image={require("../assets/images/fish.jpg")}>
+                  <Button title={"Show Products"} onPress={() => {
+                    navigation.navigate("Details", {pet: pets.fish})
+                  }}/>
+                </Card>
+
               </ScrollView>
             </View>
         )}

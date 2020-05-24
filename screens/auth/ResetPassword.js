@@ -6,7 +6,7 @@ import FormInput from "../../components/FormInput";
 import FormButton from "../../components/FormButton";
 import ErrorMessage from "../../components/ErrorMessage";
 import { Button } from "react-native-elements";
-import {Firebase} from "../../connection/comms";
+import {FirebaseIO} from "../../WebServices/firebaseIO";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -25,7 +25,7 @@ function ForgotPassword({ navigation, firebase }) {
         const { email } = values;
 
         try {
-            await Firebase.passwordReset(email);
+            await FirebaseIO.passwordReset(email);
             console.log("Password reset email sent successfully");
             navigation.navigate("Login");
         } catch (error) {

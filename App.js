@@ -2,16 +2,16 @@ import React, {useEffect, useState} from "react";
 import {Platform, StatusBar, StyleSheet, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import BottomTabNavigator from './navigation/BottomTabNavigator';
-import UserContext from "./connection/userContext";
-import AuthNavigation from "./navigation/AuthNavigation";
-import {getData} from "./connection/AsyncStorage";
+import TABBAR from './navigation/TABBAR';
+import UserContext from "./WebServices/userContext";
+import AuthenticationStack from "./navigation/AuthenticationStack";
+import {getData} from "./WebServices/Storage";
 import DetailsScreen from "./screens/DetailsScreen";
 
+// creates stack for app
 const Stack = createStackNavigator();
 
 export default App = () => {
-    // todo: make it false
     console.disableYellowBox = true;
     const [loggedIn, setLoggedin] = useState(undefined);
 
@@ -27,6 +27,7 @@ export default App = () => {
 
     const value = {loggedIn, setLoggedin};
 
+    // if logged in, go to this stack
     if (loggedIn) {
         return (
             <UserContext.Provider value={value}>
@@ -36,7 +37,7 @@ export default App = () => {
                             {Platform.OS === 'ios' && <StatusBar barStyle="default"/>}
                             <NavigationContainer>
                                 <Stack.Navigator>
-                                    <Stack.Screen name="Root" component={BottomTabNavigator}/>
+                                    <Stack.Screen name="Root" component={TABBAR}/>
                                     <Stack.Screen name="Details" component={DetailsScreen} />
                                 </Stack.Navigator>
                             </NavigationContainer>
@@ -46,6 +47,7 @@ export default App = () => {
             </UserContext.Provider>
         );
     } else {
+        // if not logged in, go to this stack
         return (
             <UserContext.Provider value={value}>
                 <UserContext.Consumer>
@@ -53,7 +55,7 @@ export default App = () => {
                         <View style={styles.container}>
                             {Platform.OS === 'ios' && <StatusBar barStyle="default"/>}
                             <NavigationContainer>
-                                <AuthNavigation/>
+                                <AuthenticationStack/>
                             </NavigationContainer>
                         </View>
                     )}

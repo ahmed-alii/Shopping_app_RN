@@ -7,19 +7,14 @@ import * as Yup from "yup";
 import FormInput from "../../components/FormInput";
 import FormButton from "../../components/FormButton";
 import ErrorMessage from "../../components/ErrorMessage";
-import {Firebase} from "../../connection/comms"
-import UserContext from "../../connection/userContext";
+import {FirebaseIO} from "../../WebServices/firebaseIO"
+import UserContext from "../../WebServices/userContext";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string()
         .label("Name")
         .required()
         .min(2, "Must have at least 2 characters"),
-    city: Yup.string()
-        .label("City")
-        .required()
-        .max(3, "Must be 3 characters")
-        .min(3, "Must be 3 characters"),
     email: Yup.string()
         .label("Email")
         .email("Enter a valid email")
@@ -68,15 +63,15 @@ function Signup({navigation, route}) {
     }
 
     async function handleOnSignup(values, actions) {
-        const {name, email, password, city} = values;
+        const {name, email, password} = values;
 
         try {
-            const response = await Firebase.signupWithEmail(email, password);
+            const response = await FirebaseIO.signupWithEmail(email, password);
             if (response.user.uid) {
                 const {uid} = response.user;
-                const userData = {email, name, uid, city};
-                await Firebase.createNewUser(userData)
-                const userLoggedin = await Firebase.loginWithEmail(email, password)
+                const userData = {email, name, uid};
+                await FirebaseIO.createNewUser(userData)
+                const userLoggedin = await FirebaseIO.loginWithEmail(email, password)
                 setLoggedin(userLoggedin);
             }
         } catch (error) {
@@ -114,11 +109,6 @@ function Signup({navigation, route}) {
                           isSubmitting,
                           setFieldValue
                       }) => {
-                        if (route.params) {
-                            if (!values.city){
-                                setFieldValue("city", route.params.stationCode)
-                            }
-                        }
                         return (
                             <>
 
@@ -132,24 +122,6 @@ function Signup({navigation, route}) {
                                     onBlur={handleBlur("name")}
                                 />
                                 <ErrorMessage errorValue={touched.name && errors.name}/>
-                                <FormInput
-                                    name="city"
-                                    value={values.city}
-                                    onChangeText={handleChange("city")}
-                                    placeholder="Enter your station code"
-                                    iconName="md-compass"
-                                    iconColor="#2C384A"
-                                    onBlur={handleBlur("city")}
-                                    onFocus={() => {
-                                        if (!route.params) {
-                                            navigation.navigate("Station")
-                                        } else {
-                                            setFieldValue("city", route.params.stationCode)
-                                        }
-                                    }}
-
-                                />
-                                <ErrorMessage errorValue={touched.city && errors.city}/>
                                 <FormInput
                                     name="email"
                                     value={values.email}

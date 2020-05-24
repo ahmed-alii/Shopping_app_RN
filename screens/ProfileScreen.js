@@ -1,14 +1,15 @@
 import React from 'react';
 import {KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
 import {Avatar, Button, ListItem, Text} from "react-native-elements";
-import UserContext from "../connection/userContext";
-import {deleteUserData, saveData} from "../connection/AsyncStorage";
-import {Firebase} from "../connection/comms";
+import UserContext from "../WebServices/userContext";
+import {deleteUserData, saveData} from "../WebServices/Storage";
+import {FirebaseIO} from "../WebServices/firebaseIO";
 
-
+// This is the profile screen.
 export default function ProfileScreen() {
     return (
         <UserContext.Consumer>
+
             {({loggedIn, setLoggedin}) => (
                 <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"}
                                       style={styles.container}>
@@ -36,35 +37,13 @@ export default function ProfileScreen() {
                                 disabled: true
                             }}
                         />
-                        <ListItem
-                            topDivider
-                            title="Location"
-                            input={{
-                                placeholder: 'Type Here',
-                                defaultValue: loggedIn.city,
-                                onChangeText: text => {
-                                    setLoggedin(previousState => ({...previousState, city: text}));
-                                }
-                            }}
-                        />
-                        <Text style={{paddingHorizontal: 20}}>Please write the 3 letter station code. Search for station codes in search tab.</Text>
-                        <Text style={{paddingHorizontal: 20}}>You can also change default station by long-pressing the station in search tab.</Text>
-                        <Button
-                            onPress={() => {
-                                Firebase.updateCity(loggedIn.city, loggedIn.uid).then(r => {
-                                    if (r === true) {
-                                        saveData(loggedIn)
-                                    }
-                                })
-                            }}
-                            title={"Update City"}
-                            style={{padding: 10, marginTop: 20}}
-                        />
+
+
                         <Button
                             onPress={() => {
                                 deleteUserData().then(() => {
                                     setLoggedin(undefined)
-                                    Firebase.signOut().then(() => console.log("Logged out"))
+                                    FirebaseIO.signOut().then(() => console.log("Logged out"))
                                 })
                             }}
                             title={"Sign Out"}

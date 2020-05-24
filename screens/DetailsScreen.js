@@ -1,59 +1,40 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {RefreshControl, ScrollView, StyleSheet, Text, View} from 'react-native'
-import UserContext from "../connection/userContext";
-import {Fetch} from "../connection/comms";
-import TrainsList from "../components/TrainsDetailsList";
+import React, {useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, View, Image, Button} from 'react-native'
+import UserContext from "../WebServices/userContext";
+import {Card} from "react-native-elements";
 
 export default function DetailsScreen({navigation, route}) {
 
+    // Shows the products in each category. This has cards which shows price, stock, image and a buy button.
+
+    const [data, setData] = useState(null);
     const [Loading, setLoading] = useState(true)
-    const [trains, setTrains] = useState(undefined)
-    const [refreshing, setRefreshing] = useState(false);
-    const {loggedIn, setLoggedin} = useContext(UserContext)
 
-
-    const loadDataInView = () => {
-        Fetch.getData(route.params.stationCode).then(res => {
-            setTrains(res.departures.all)
-            setLoading(false)
-            setRefreshing(false)
-        })
-    }
 
     useEffect(() => {
         if (Loading === true) {
-            loadDataInView()
+            setData(route.params.pet)
         }
     })
-
-    const onRefresh = () => {
-        loadDataInView()
-        setRefreshing(true)
-        setLoading(true)
-
-    }
 
 
     return (
         <UserContext.Consumer>
             {({loggedIn, setLoggedin}) => (
                 <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Text style={styles.smallText}>
-                            Showing All Trains For Your Location
-                        </Text>
+                    <ScrollView style={styles.container}>
+                        {data && data.map((item, key) => (
+                            <Card
+                            featuredTitle={item.title}
+                            key={key}
+                            title={"Price: " + item.price + " - Stock: " + item.stock}
+                            image={{uri: item.image}}>
+                            <Button
+                            buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                            title='Buy Now'  onPress={()=>(alert("You can purchase this item in our shop."))}/>
+                            </Card>
 
-                        <Text style={styles.title}>
-                            🗺 {route.params.stationName}
-                        </Text>
-                    </View>
-                    <ScrollView style={styles.container}
-                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
-                        <TrainsList trains={trains}/>
-                        <Text style={{
-                            textAlign: "center",
-                            paddingVertical: 20
-                        }}>{"No more trains leaving today 🚏"}</Text>
+                        ))}
                     </ScrollView>
                 </View>
             )}
@@ -68,6 +49,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        paddingBottom: 50
     },
     header: {
         padding: 20,

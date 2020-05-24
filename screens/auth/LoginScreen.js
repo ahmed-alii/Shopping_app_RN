@@ -7,8 +7,8 @@ import * as Yup from "yup";
 import FormInput from "../../components/FormInput";
 import FormButton from "../../components/FormButton";
 import ErrorMessage from "../../components/ErrorMessage";
-import {Firebase} from "../../connection/comms";
-import UserContext from "../../connection/userContext"
+import {FirebaseIO} from "../../WebServices/firebaseIO";
+import UserContext from "../../WebServices/userContext"
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -49,7 +49,7 @@ function Login({navigation}) {
         const { email, password } = values;
 
         try {
-            const response = await Firebase.loginWithEmail(email, password);
+            const response = await FirebaseIO.loginWithEmail(email, password);
             if (response) {
                 setLoggedin(response);
             }
@@ -115,7 +115,7 @@ function Login({navigation}) {
                                 buttonType="outline"
                                 onPress={handleSubmit}
                                 title="LOGIN"
-                                buttonColor="#039BE5"
+                                buttonColor="#3087c9"
                                 disabled={!isValid || isSubmitting}
                                 loading={isSubmitting}
                             />
@@ -128,7 +128,7 @@ function Login({navigation}) {
                 title="Don't have an account? Sign Up"
                 onPress={goToSignup}
                 titleStyle={{
-                    color: "#F57C00"
+                    color: "#3087c9"
                 }}
                 type="clear"
             />
@@ -136,7 +136,7 @@ function Login({navigation}) {
                 title="Forgot Password?"
                 onPress={goToForgotPassword}
                 titleStyle={{
-                    color: "#039BE5"
+                    color: "#03c3e5"
                 }}
                 type="clear"
             />
