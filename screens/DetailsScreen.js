@@ -1,43 +1,72 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View, Image, Button} from 'react-native'
+import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import UserContext from "../WebServices/userContext";
-import {Card} from "react-native-elements";
+import {Button, Card, ListItem} from "react-native-elements";
+import {Block} from "galio-framework";
+import {getWishlist, saveWishlist} from "../WebServices/wishlistStorage";
 
 export default function DetailsScreen({navigation, route}) {
 
-    // Shows the products in each category. This has cards which shows price, stock, image and a buy button.
-
-    const [data, setData] = useState(null);
+    const [data, setData] = useState(undefined);
     const [Loading, setLoading] = useState(true)
 
 
     useEffect(() => {
         if (Loading === true) {
-            setData(route.params.pet)
+            setData(route.params.data)
         }
     })
 
 
     return (
         <UserContext.Consumer>
-            {({loggedIn, setLoggedin}) => (
-                <View style={styles.container}>
-                    <ScrollView style={styles.container}>
-                        {data && data.map((item, key) => (
-                            <Card
-                            featuredTitle={item.title}
-                            key={key}
-                            title={"Price: " + item.price + " - Stock: " + item.stock}
-                            image={{uri: item.image}}>
-                            <Button
-                            buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                            title='Buy Now'  onPress={()=>(alert("You can purchase this item in our shop."))}/>
-                            </Card>
+            {({loggedIn, setLoggedin}) => {
+                if (data !== undefined) {
+                    return (
+                        <View style={styles.container}>
+                            <ScrollView style={styles.container}>
+                                <Card featuredTitle={data[0]} image={{uri: data[1].image}}
+                                      featuredTitleStyle={{fontSize: 30}}>
+                                    <Block row space={"around"}>
+                                        <Button title="Add to wish list" onPress={()=> {
+                                            let save = {[data[0]]: data[1]}
+                                            console.log(save)
+                                            saveWishlist(save).then(alert("Added to wishlist."))
 
-                        ))}
-                    </ScrollView>
-                </View>
-            )}
+                                        }}/>
+                                        <Button title="Buy Now" onPress={() => (alert("Purchase Done."))}/>
+                                    </Block>
+                                </Card>
+                                <Text style={{fontSize: 20, fontWeight: "bold", padding: 20}}>Description</Text>
+                                <Text style={{paddingHorizontal: 20}}>Lorem ipsum dolor sit amet, consectetur
+                                    adipisicing elit. Aut blanditiis eligendi
+                                    iusto neque pariatur. Accusantium aliquid amet, at deserunt dolorum facere, facilis
+                                    hic ipsam iure molestias perferendis praesentium, unde voluptatum.</Text>
+
+                                <Text style={{textAlign: "center", paddingVertical: 10}}>...</Text>
+
+                                <ListItem title={"Price"} rightSubtitle={data[1].price} bottomDivider
+                                          titleStyle={{fontSize: 20}} rightSubtitleStyle={{fontSize: 18}}/>
+
+                                <ListItem title={"Colour"} rightSubtitle={data[1].color} bottomDivider
+                                          titleStyle={{fontSize: 20}} rightSubtitleStyle={{fontSize: 18}}/>
+                                <ListItem title={"Weight"} rightSubtitle={"200 Grams"} bottomDivider
+                                          titleStyle={{fontSize: 20}} rightSubtitleStyle={{fontSize: 18}}/>
+                                <ListItem title={"Shipping Time"} rightSubtitle={data[1].shipping + " Days"}
+                                          bottomDivider
+                                          titleStyle={{fontSize: 20}} rightSubtitleStyle={{fontSize: 18}}/>
+                            </ScrollView>
+                        </View>
+                    )
+                } else {
+                    return (
+                        <View style={styles.container}>
+                            <Text>No Data Found</Text>
+                        </View>
+                    )
+
+                }
+            }}
         </UserContext.Consumer>
 
 
@@ -59,9 +88,5 @@ const styles = StyleSheet.create({
         fontStyle: "italic",
         fontWeight: "200",
         color: "grey"
-    },
-    title: {
-        fontSize: 30,
-        fontWeight: "bold"
     }
 });

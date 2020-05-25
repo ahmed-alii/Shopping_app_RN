@@ -7,5 +7,3 @@ export default {
     messagingSenderId: "##########",
     appId: "##########",
 };
-
-//Rename this file to firebaseConfig and fill it with your own details.

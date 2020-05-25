@@ -63,7 +63,7 @@ function Login({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={{alignItems: "center", marginVertical: 20}}>
-                <Avatar source={require("../../assets/images/userProfile.png")} size={"xlarge"} rounded/>
+                <Image source={require("../../assets/images/splash.png")} style={{height: 200, width: 200, resizeMode: "cover"}}/>
             </View>
             <Formik
                 initialValues={{email: "", password: ""}}

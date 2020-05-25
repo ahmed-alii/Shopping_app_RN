@@ -1,5 +1,5 @@
 import React from 'react';
-import {KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
+import {Image, KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
 import {Avatar, Button, ListItem, Text} from "react-native-elements";
 import UserContext from "../WebServices/userContext";
 import {deleteUserData, saveData} from "../WebServices/Storage";
@@ -15,7 +15,7 @@ export default function ProfileScreen() {
                                       style={styles.container}>
                     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                         <View style={{alignItems: "center", marginBottom: 20}}>
-                            <Avatar source={require("../assets/images/userProfile.png")} size={"xlarge"} rounded/>
+                            <Image source={require("../assets/images/splash.png")} style={{height: 200, width: 200, resizeMode: "cover"}}/>
                         </View>
 
                         <ListItem

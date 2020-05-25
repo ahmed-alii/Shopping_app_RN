@@ -41,7 +41,7 @@ export const FirebaseIO = {
 
 export const Fetch = {
     getData: () => {
-        const URL = "https://shop-open-close.herokuapp.com/api"
+        const URL = "............."
         return fetch(URL, {
             method: 'get',
         }).then(function (response) {

@@ -186,7 +186,7 @@ function Signup({navigation, route}) {
                                         buttonType="outline"
                                         onPress={handleSubmit}
                                         title="SIGNUP"
-                                        buttonColor="#F57C00"
+                                        buttonColor="#039BE5"
                                         disabled={!isValid || isSubmitting}
                                         loading={isSubmitting}
                                     />
