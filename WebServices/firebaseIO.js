@@ -39,18 +39,3 @@ export const FirebaseIO = {
     },
 };
 
-export const Fetch = {
-    getData: () => {
-        const URL = "............."
-        return fetch(URL, {
-            method: 'get',
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-            return data;
-        }).catch(r => {
-            console.log(r)
-        });
-    }
-}
-
