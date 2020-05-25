@@ -9,10 +9,10 @@ export let GIFTS = {
 
 }
 
-export function searchGifts(querry) {
+export function searchGifts(query) {
     let suggestions = {};
     for(let index in GIFTS){
-        if (index.includes(querry)){
+        if (index.includes(query)){
             suggestions[index] = GIFTS[index]
         }
     }
